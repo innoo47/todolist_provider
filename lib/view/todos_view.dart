@@ -11,7 +11,11 @@ class TodosView extends StatefulWidget {
 }
 
 class _TodosViewState extends State<TodosView> {
-  late List<Todos> todosList;
+  @override
+  void initState() {
+    super.initState();
+    Provider.of<TodosProvider>(context, listen: false).fetchTodos();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,40 +25,53 @@ class _TodosViewState extends State<TodosView> {
       ),
       body: Consumer<TodosProvider>(
         builder: (context, provider, child) {
-          todosList = provider.getTodosList();
-          return ListView.builder(
-            itemCount: todosList.length,
-            itemBuilder: (context, index) {
-              return Container(
-                padding: const EdgeInsets.all(15),
-                child: Row(
-                  children: [
-                    Text(todosList[index].id.toString()),
-                    const SizedBox(width: 20),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+          return StreamBuilder<List<Todos>>(
+              stream: provider.todosStream,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                    ),
+                  );
+                } else if (snapshot.hasError) {
+                  return const Center(child: Text('Error'));
+                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return const Center(child: Text('No data'));
+                }
+                final todosList = snapshot.data!;
+                return ListView.builder(
+                  itemCount: todosList.length,
+                  itemBuilder: (context, index) {
+                    return Container(
+                      padding: const EdgeInsets.all(15),
+                      child: Row(
                         children: [
-                          Text(
-                            todosList[index].title!,
-                            overflow: TextOverflow.ellipsis,
+                          Text(todosList[index].id.toString()),
+                          const SizedBox(width: 20),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  todosList[index].title!,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                Text(
+                                    "userId : ${todosList[index].userId.toString()}"),
+                              ],
+                            ),
                           ),
-                          Text(
-                              "userId : ${todosList[index].userId.toString()}"),
+                          Checkbox(
+                            value: todosList[index].completed,
+                            onChanged: null,
+                          ),
                         ],
                       ),
-                    ),
-                    Checkbox(
-                      value: todosList[index].completed.toString() == 'true'
-                          ? true
-                          : false,
-                      onChanged: null,
-                    ),
-                  ],
-                ),
-              );
-            },
-          );
+                    );
+                  },
+                );
+              });
         },
       ),
     );
