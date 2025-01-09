@@ -40,6 +40,8 @@ class TodosProvider with ChangeNotifier {
     } catch (e) {
       print(e);
     }
+
+    notifyListeners(); // 변경 사항을 알림
   }
 
   @override
