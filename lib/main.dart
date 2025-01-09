@@ -13,6 +13,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    // 변경 사항을 알려야 하므로 ChangeNotifierProvider를 사용
     return ChangeNotifierProvider<TodosProvider>(
       create: (context) => TodosProvider(),
       child: const MaterialApp(
