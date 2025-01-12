@@ -1,10 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:todolist_provider/provider/login_provider.dart';
 import 'package:todolist_provider/provider/todos_provider.dart';
-import 'package:todolist_provider/view/todos_view.dart';
+import 'package:todolist_provider/view/login_view.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        // 변경 사항을 알려야 하므로 ChangeNotifierProvider를 사용
+        ChangeNotifierProvider(create: (_) => LoginProvider()),
+        ChangeNotifierProxyProvider<LoginProvider, TodosProvider>(
+          create: (context) => TodosProvider(context.read<LoginProvider>()),
+          update: (context, loginProvider, todosProvider) =>
+              TodosProvider(loginProvider),
+        ),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -13,12 +27,8 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    // 변경 사항을 알려야 하므로 ChangeNotifierProvider를 사용
-    return ChangeNotifierProvider<TodosProvider>(
-      create: (context) => TodosProvider(),
-      child: const MaterialApp(
-        home: TodosView(),
-      ),
+    return const MaterialApp(
+      home: LoginView(),
     );
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:todolist_provider/model/todos.dart';
 import 'package:todolist_provider/provider/todos_provider.dart';
+import 'package:todolist_provider/provider/login_provider.dart';
 
 class TodosView extends StatefulWidget {
   const TodosView({super.key});
@@ -18,6 +19,12 @@ class _TodosViewState extends State<TodosView> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('TodoList (Provider)'),
+        leading: IconButton(
+          onPressed: () {
+            LoginProvider().logout(context);
+          },
+          icon: const Icon(Icons.logout),
+        ),
       ),
       body: Consumer<TodosProvider>(
         builder: (context, provider, child) {
