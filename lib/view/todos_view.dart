@@ -21,14 +21,15 @@ class _TodosViewState extends State<TodosView> {
         title: const Text('TodoList (Provider)'),
         leading: IconButton(
           onPressed: () {
-            LoginProvider().logout(context);
+            context.read<LoginProvider>().logout(context);
           },
           icon: const Icon(Icons.logout),
         ),
       ),
       body: Consumer<TodosProvider>(
         builder: (context, provider, child) {
-          todosList = provider.getTodosList();
+          todosList =
+              provider.getTodosList(context.read<LoginProvider>().userId);
           return StreamBuilder<List<Todos>>(
             stream: provider.todosStream,
             builder: (context, snapshot) {

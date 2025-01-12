@@ -3,7 +3,7 @@ import 'package:todolist_provider/view/todos_view.dart';
 import 'package:todolist_provider/view/login_view.dart';
 
 class LoginProvider with ChangeNotifier {
-  String? userId;
+  late String userId; // userId을 non-nullable 변수로 만들기 위해 late를 사용
   bool _isLoggedIn = false;
 
   bool get isLoggedIn => _isLoggedIn;
@@ -21,7 +21,6 @@ class LoginProvider with ChangeNotifier {
   }
 
   void logout(BuildContext context) {
-    userId = null;
     _isLoggedIn = false;
     notifyListeners();
     Navigator.of(context).pushReplacement(

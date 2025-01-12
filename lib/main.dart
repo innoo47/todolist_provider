@@ -8,13 +8,8 @@ void main() {
   runApp(
     MultiProvider(
       providers: [
-        // 변경 사항을 알려야 하므로 ChangeNotifierProvider를 사용
         ChangeNotifierProvider(create: (_) => LoginProvider()),
-        ChangeNotifierProxyProvider<LoginProvider, TodosProvider>(
-          create: (context) => TodosProvider(context.read<LoginProvider>()),
-          update: (context, loginProvider, todosProvider) =>
-              TodosProvider(loginProvider),
-        ),
+        ChangeNotifierProvider(create: (_) => TodosProvider()),
       ],
       child: const MyApp(),
     ),
