@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:todolist_provider/view/todos_view.dart';
 import 'package:todolist_provider/view/login_view.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginProvider with ChangeNotifier {
-  late String userId; // userId을 non-nullable 변수로 만들기 위해 late를 사용
+  // late String userId; // userId을 non-nullable 변수로 만들기 위해 late를 사용
   bool _isLoggedIn = false;
 
   bool get isLoggedIn => _isLoggedIn;
 
-  void login(BuildContext context, String value) {
+  void login(BuildContext context, String value) async {
     print('login_userId : $value');
-    userId = value;
+    final SharedPreferences pref = await SharedPreferences.getInstance();
+    pref.setString('userId', value);
     _isLoggedIn = true;
     notifyListeners();
     Navigator.of(context).pushReplacement(
@@ -20,7 +22,9 @@ class LoginProvider with ChangeNotifier {
     );
   }
 
-  void logout(BuildContext context) {
+  void logout(BuildContext context) async {
+    final SharedPreferences pref = await SharedPreferences.getInstance();
+    await pref.remove('userId');
     _isLoggedIn = false;
     notifyListeners();
     Navigator.of(context).pushReplacement(

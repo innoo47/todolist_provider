@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:todolist_provider/model/todos.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class TodosProvider with ChangeNotifier {
   final List<Todos> _todosList =
@@ -14,13 +15,14 @@ class TodosProvider with ChangeNotifier {
   Stream<List<Todos>> get todosStream =>
       _todoStreamController.stream; // Stream을 반환하는 getter
 
-  List<Todos> getTodosList(String userId) {
-    _fetchTodos(userId); // fetchTodos 메서드를 호출
+  List<Todos> getTodosList() {
+    _fetchTodos(); // fetchTodos 메서드를 호출
     return _todosList; // _todosList를 반환
   }
 
   // fetchTodos 메서드를 생성
-  Future<void> _fetchTodos(String userId) async {
+  Future<void> _fetchTodos() async {
+    final SharedPreferences pref = await SharedPreferences.getInstance();
     try {
       final response = await http
           .get(Uri.parse('https://jsonplaceholder.typicode.com/todos'));
@@ -31,8 +33,8 @@ class TodosProvider with ChangeNotifier {
             .toList();
 
         _todosList.clear();
-        _todosList.addAll(
-            result.where((result) => result.userId == int.parse(userId)));
+        _todosList.addAll(result.where(
+            (result) => result.userId == int.parse(pref.getString('userId')!)));
 
         _todoStreamController.add(_todosList); // Stream에 데이터를 추가
       } else {

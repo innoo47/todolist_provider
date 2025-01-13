@@ -28,8 +28,7 @@ class _TodosViewState extends State<TodosView> {
       ),
       body: Consumer<TodosProvider>(
         builder: (context, provider, child) {
-          todosList =
-              provider.getTodosList(context.read<LoginProvider>().userId);
+          todosList = provider.getTodosList();
           return StreamBuilder<List<Todos>>(
             stream: provider.todosStream,
             builder: (context, snapshot) {
